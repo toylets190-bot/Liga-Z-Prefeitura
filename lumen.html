@@ -581,7 +581,7 @@ const clubes = [
     dono: "Marcos",
     escudo: "https://upload.wikimedia.org/wikipedia/en/5/59/Bayer_04_Leverkusen_logo.svg",
     escudoAlt: "",
-    descricao: "Um dos clubes fundadores da Liga Zé Prefeitura.",
+    descricao: "Maior campeão e um dos clubes fundadores da Liga Zé Prefeitura.",
     anoEntrada: 1,
     ativo: true
   },
@@ -597,11 +597,11 @@ const clubes = [
   },
   {
     id: "kyoto",
-    nome: "Kyoto Sagna",
+    nome: "Kyoto Sanga",
     dono: "Nicolas",
-    escudo: "https://upload.wikimedia.org/wikipedia/en/thumb/a/aa/Kyoto_Sanga_FC_logo.svg/200px-Kyoto_Sanga_FC_logo.svg.png",
+    escudo: "https://thumb.wikimedia.org/wikipedia/en/thumb/a/a2/Kyoto_Sanga_FC_logo.svg/250px-Kyoto_Sanga_FC_logo.svg.png?utm_source=en.wikipedia.org&utm_campaign=parser&utm_content=thumbnail",
     escudoAlt: "",
-    descricao: "Um dos clubes fundadores da Liga Zé Prefeitura.",
+    descricao: "Primeiro campeão e um dos clubes fundadores da Liga Zé Prefeitura.",
     anoEntrada: 1,
     ativo: true
   }
@@ -612,18 +612,18 @@ const clubes = [
 // A chave (semifinais + final) também usa os ids dos clubes; use null
 // para um confronto ou vencedor ainda não definido.
 const torneios = [
-  { numero: 1, nome: "Torneio 1", campeao: null, vice: null,
-    chave: { semifinais: [["arsenal","flamengo"], ["bayer","kyoto"]], final: [null, null] } },
-  { numero: 2, nome: "Torneio 2", campeao: null, vice: null,
-    chave: { semifinais: [["arsenal","bayer"], ["flamengo","kyoto"]], final: [null, null] } },
-  { numero: 3, nome: "Torneio 3", campeao: null, vice: null,
-    chave: { semifinais: [["arsenal","kyoto"], ["flamengo","bayer"]], final: [null, null] } },
-  { numero: 4, nome: "Torneio 4", campeao: null, vice: null,
-    chave: { semifinais: [["arsenal","flamengo"], ["bayer","kyoto"]], final: [null, null] } },
-  { numero: 5, nome: "Torneio 5", campeao: null, vice: null,
-    chave: { semifinais: [["arsenal","bayer"], ["flamengo","kyoto"]], final: [null, null] } },
+  { numero: 1, nome: "Torneio 1", campeao: kyoto, vice: arsenal,
+    chave: { semifinais: [["kyoto","flamengo"], ["bayer","arsenal"]], final: [kyoto, arsenal] } },
+  { numero: 2, nome: "Torneio 2", campeao: bayer, vice: kyoto,
+    chave: { semifinais: [["arsenal","bayer"], ["flamengo","kyoto"]], final: [kyoto, bayer] } },
+  { numero: 3, nome: "Torneio 3", campeao: bayer, vice: flamengo,
+    chave: { semifinais: [["kyoto","bayer"], ["flamengo","arsenal"]], final: [bayer, flamengo] } },
+  { numero: 4, nome: "Torneio 4", campeao: flamengo, vice: arsenal,
+    chave: { semifinais: [["kyoto","flamengo"], ["bayer","flamengo"]], final: [flamengo, bayer] } },
+  { numero: 5, nome: "Torneio 5", campeao: arsenal, vice: kyoto,
+    chave: { semifinais: [["arsenal","bayer"], ["flamengo","kyoto"]], final: [kyoto, arsenal] } },
   { numero: 6, nome: "Torneio 6", campeao: null, vice: null,
-    chave: { semifinais: [["arsenal","kyoto"], ["flamengo","bayer"]], final: [null, null] } }
+    chave: { semifinais: [["null","null"], ["null","null"]], final: [null, null] } }
 ];
 
 // Notícias fictícias/históricas. Edite ou adicione livremente.
@@ -631,7 +631,7 @@ const noticias = [
   { titulo: "Copa Liga eFootball chega à sua sexta edição", data: "Torneio 6", categoria: "Liga", icone: "📰",
     descricao: "Com cinco torneios já no histórico, a competição entre os quatro clubes segue firme rumo à sua próxima grande final." },
   { titulo: "Quatro clubes, uma só rivalidade", data: "Histórico", categoria: "Bastidores", icone: "🔥",
-    descricao: "Arsenal, Bayer Leverkusen, Flamengo e Kyoto Sagna seguem como os únicos disputantes fixos da Liga Zé Prefeitura." },
+    descricao: "Arsenal, Bayer Leverkusen, Flamengo e Kyoto Sanga seguem como os únicos disputantes fixos da Liga Zé Prefeitura." },
   { titulo: "Aguardando os resultados oficiais", data: "Atualização", categoria: "Arquivo", icone: "🗂️",
     descricao: "Os campeões e vices de cada torneio serão publicados aqui assim que cadastrados no sistema." }
 ];
