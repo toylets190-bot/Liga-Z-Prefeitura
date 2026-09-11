@@ -1,0 +1,771 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Liga Lumen — Quadro de Campeões</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Big+Shoulders:wght@500;600;700;900&family=Manrope:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --bg:        #0E1710;
+    --panel:     #142016;
+    --panel-2:   #101B14;
+    --line:      #263B2C;
+    --gold:      #C9A227;
+    --gold-dim:  rgba(201,162,39,0.16);
+    --cream:     #F1ECDD;
+    --muted:     #93A99A;
+    --muted-2:   #5E7468;
+    --radius-sm: 4px;
+    --maxw: 1000px;
+  }
+
+  *{ box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
+  html{ scroll-behavior: smooth; }
+  body{
+    margin:0;
+    background-color: var(--bg);
+    background-image: repeating-linear-gradient(115deg, rgba(255,255,255,0.012) 0px, rgba(255,255,255,0.012) 2px, transparent 2px, transparent 46px);
+    color: var(--cream);
+    font-family: 'Manrope', sans-serif;
+    line-height: 1.55;
+    -webkit-font-smoothing: antialiased;
+  }
+  .display{ font-family:'Big Shoulders', sans-serif; }
+
+  .page{ max-width: var(--maxw); margin: 0 auto; padding: 0 20px 40px; }
+
+  a{ color: var(--gold); text-decoration: none; }
+  a:hover{ text-decoration: underline; }
+  :focus-visible{ outline: 2px solid var(--gold); outline-offset: 3px; }
+
+  /* ---------- TOP BAR ---------- */
+  .topbar{
+    display:flex; align-items:center; justify-content:space-between; gap:18px;
+    padding: 20px 0 16px;
+    border-bottom: 1px solid var(--line);
+    position: sticky; top:0; background: var(--bg); z-index: 30;
+  }
+  .topbar .brand{
+    font-family:'Big Shoulders', sans-serif;
+    font-weight: 600; font-size: 19px; letter-spacing: 0.3px;
+    color: var(--cream); flex: 0 0 auto;
+  }
+  .topbar .brand span{ color: var(--gold); }
+  .nav{ display:flex; gap:18px; overflow-x:auto; scrollbar-width:none; }
+  .nav::-webkit-scrollbar{ display:none; }
+  .nav a{ font-size:13px; color: var(--muted); white-space:nowrap; }
+  .nav a:hover{ color: var(--gold); text-decoration:none; }
+
+  /* ---------- HERO ---------- */
+  .hero{ position:relative; overflow:hidden; padding: 52px 0 34px; }
+  .hero::before{
+    content:''; position:absolute; top:-140px; left:50%; transform:translateX(-50%);
+    width:900px; height:420px;
+    background: radial-gradient(ellipse at center, var(--gold-dim) 0%, transparent 70%);
+    filter: blur(6px); pointer-events:none;
+    animation: glow 7s ease-in-out infinite;
+  }
+  @keyframes glow{ 0%,100%{ opacity:0.45; } 50%{ opacity:1; } }
+  .hero h1, .hero p{ position:relative; z-index:1; }
+  .hero h1{
+    font-family:'Big Shoulders', sans-serif;
+    font-weight: 900;
+    font-size: clamp(52px, 11vw, 124px);
+    line-height: 0.92;
+    margin: 0 0 16px;
+    color: var(--cream);
+    letter-spacing: 0.5px;
+  }
+  .hero p{ max-width: 60ch; font-size: 17px; color: var(--muted); margin: 0; }
+  .hero p strong{ color: var(--cream); font-weight: 600; }
+
+  .hero, .stats-strip{ opacity: 0; transform: translateY(14px); animation: rise 0.7s ease-out forwards; }
+  .stats-strip{ animation-delay: 0.12s; }
+  @keyframes rise{ to{ opacity:1; transform:none; } }
+  @media (prefers-reduced-motion: reduce){
+    .hero, .stats-strip{ animation:none; opacity:1; transform:none; }
+    .hero::before{ animation:none; opacity:0.7; }
+  }
+
+  /* ---------- STAT STRIP ---------- */
+  .stats-strip{
+    display:grid;
+    grid-template-columns: repeat(auto-fit, minmax(190px, 1fr));
+    gap: 1px; background: var(--line);
+    border-top: 1px solid var(--line); border-bottom: 1px solid var(--line);
+    margin-bottom: 52px;
+  }
+  .stat{ background: var(--bg); padding: 20px 22px; }
+  .stat .label{ font-size: 13px; color: var(--muted-2); margin-bottom: 8px; }
+  .stat .value{ font-family:'Big Shoulders', sans-serif; font-weight: 700; font-size: 26px; color: var(--cream); line-height:1.1; margin-bottom:4px; }
+  .stat .sub{ font-size: 14px; color: var(--gold); }
+  .countup{ font-family:'Big Shoulders', sans-serif; }
+
+  /* ---------- SECTION HEAD (shared) ---------- */
+  .section-head{ margin-bottom: 22px; }
+  .section-head h2{ font-family:'Big Shoulders', sans-serif; font-weight: 700; font-size: 32px; margin: 0 0 6px; color: var(--cream); }
+  .section-head p{ font-size: 14px; color: var(--muted-2); margin: 0; }
+  section{ margin-bottom: 60px; scroll-margin-top: 90px; }
+
+  /* ---------- CRESTS (shared) ---------- */
+  .crest{ width:40px; height:46px; display:flex; align-items:center; justify-content:center; flex-shrink:0; }
+  .shield{ position:relative; width:36px; height:42px; clip-path: polygon(50% 0%, 100% 18%, 100% 56%, 50% 100%, 0% 56%, 0% 18%); }
+  .shield .icon{ position:absolute; inset:0; display:flex; align-items:center; justify-content:center; }
+  .shield .icon svg{ width:18px; height:18px; }
+  .crest.lg{ width:60px; height:70px; }
+  .crest.lg .shield{ width:56px; height:65px; }
+  .crest.lg .shield .icon svg{ width:28px; height:28px; }
+
+  /* ---------- PODIUM ---------- */
+  .podium{ display:flex; flex-direction:column; gap:14px; align-items:stretch; }
+  .podium-col{
+    background: var(--panel); border-top: 3px solid var(--line);
+    padding: 18px 16px; text-align:center;
+    display:flex; flex-direction:column; align-items:center; gap:6px;
+    transition: transform 0.15s ease;
+  }
+  .podium-col:hover{ transform: translateY(-2px); }
+  .place-1{ border-top-color: var(--gold); }
+  .p-rank{ font-size:30px; color:var(--muted-2); }
+  .place-1 .p-rank{ color:var(--gold); font-size:36px; }
+  .p-name{ font-weight:600; font-size:15px; margin-top:2px; }
+  .p-count{ font-size:30px; color:var(--cream); margin-top:2px; }
+  .p-label{ font-size:12px; color:var(--muted-2); }
+
+  @media (min-width: 620px){
+    .podium{ flex-direction:row; align-items:flex-end; justify-content:center; gap:16px; }
+    .podium-col{ width:180px; }
+    .place-2{ order:1; padding-top:22px; }
+    .place-1{ order:2; padding-top:38px; }
+    .place-3{ order:3; padding-top:10px; }
+  }
+
+  /* ---------- CONTROLS BAR ---------- */
+  .controls-bar{ display:flex; flex-wrap:wrap; gap:12px; margin-bottom:16px; }
+  .search-wrap{ position:relative; flex:1 1 220px; }
+  .search-wrap .search-icon{ position:absolute; left:12px; top:50%; transform:translateY(-50%); width:16px; height:16px; color:var(--muted-2); pointer-events:none; }
+  .search-wrap input{ width:100%; background:var(--panel); border:1px solid var(--line); color:var(--cream); padding:11px 14px 11px 36px; border-radius:var(--radius-sm); font-family:'Manrope',sans-serif; font-size:14px; }
+  .search-wrap input::placeholder{ color:var(--muted-2); }
+  .search-wrap input:focus{ border-color:var(--gold); }
+  .sort-wrap{ display:flex; align-items:center; gap:8px; font-size:13px; color:var(--muted-2); flex:0 1 auto; }
+  .sort-wrap select{ background:var(--panel); border:1px solid var(--line); color:var(--cream); padding:10px 12px; border-radius:var(--radius-sm); font-family:'Manrope',sans-serif; font-size:14px; max-width: 100%; }
+  .no-results{ display:none; padding:34px 10px; text-align:center; color:var(--muted-2); font-size:14px; }
+
+  /* ---------- TITLES TABLE ---------- */
+  .table-header, .row-summary{
+    display:grid;
+    grid-template-columns: 30px 48px 1fr 84px 84px 120px 88px 20px;
+    align-items:center; gap: 14px; padding: 14px 10px;
+  }
+  .table-header{ font-size: 13px; color: var(--muted-2); border-bottom: 1px solid var(--line); }
+  .table-header span:nth-child(4), .table-header span:nth-child(5),
+  .table-header span:nth-child(6), .table-header span:nth-child(7){ text-align:right; }
+
+  .club-list{ border-bottom: 1px solid var(--line); }
+  .club-row{ border-top: 1px solid var(--line); }
+  .row-summary{
+    width:100%; text-align:left; background:none; border:none; cursor:pointer;
+    color: var(--cream); font-family:'Manrope', sans-serif;
+    transition: background-color 0.15s ease;
+  }
+  .row-summary:hover{ background: var(--panel); }
+
+  .rank{ font-family:'Big Shoulders', sans-serif; font-weight:600; color: var(--muted); text-align:center; font-size:16px; }
+  .club-name{ font-weight:600; font-size:16px; }
+  .club-name .founded-inline{ display:none; font-size:12px; color:var(--muted-2); font-weight:400; }
+
+  .num{ font-family:'Big Shoulders', sans-serif; font-weight:600; font-size:18px; text-align:right; }
+  .num.titles{ color: var(--gold); }
+  .num.finals{ color: var(--cream); }
+  .last-title{ text-align:right; font-size:14px; color:var(--muted); }
+  .founded{ text-align:right; font-size:14px; color:var(--muted-2); }
+
+  .chevron{ width:16px; height:16px; color: var(--muted-2); transition: transform 0.2s ease; justify-self:end; }
+  .row-summary[aria-expanded="true"] .chevron{ transform: rotate(180deg); color: var(--gold); }
+
+  .row-detail{ max-height: 0; overflow: hidden; transition: max-height 0.35s ease; background: var(--panel-2); }
+  .row-detail-inner{ padding: 4px 10px 26px 92px; }
+  .row-detail-inner p{ max-width: 66ch; font-size: 15px; color: var(--muted); margin: 10px 0 18px; }
+  .palmares-label{ font-size: 12px; color: var(--muted-2); margin-bottom: 10px; }
+  .chips{ display:flex; flex-wrap:wrap; gap: 8px; }
+  .chip{ font-size: 13px; padding: 5px 12px; border-radius: 999px; border: 1px solid var(--line); color: var(--muted); }
+  .chip.win{ border-color: var(--gold); color: var(--gold); background: var(--gold-dim); }
+
+  @media (max-width: 680px){
+    .table-header{ display:none; }
+    .row-summary{
+      grid-template-columns: 28px 42px 1fr auto 18px;
+      grid-template-areas: "rank crest name titles chev" "rank crest founded founded chev";
+    }
+    .rank{ grid-area: rank; }
+    .crest{ grid-area: crest; }
+    .club-name{ grid-area: name; }
+    .club-name .founded-inline{ display:block; }
+    .num.titles{ grid-area: titles; }
+    .num.finals, .last-title, .founded{ display:none; }
+    .chevron{ grid-area: chev; }
+    .row-detail-inner{ padding: 4px 10px 22px 78px; }
+  }
+
+  /* ---------- TIMELINE ---------- */
+  .timeline{ position:relative; }
+  .tl-item{ display:grid; grid-template-columns: 56px 20px 1fr; padding: 12px 0; }
+  .tl-year{ font-size:19px; font-weight:600; color:var(--muted); }
+  .tl-marker{ position:relative; display:flex; justify-content:center; }
+  .tl-marker::before{ content:''; position:absolute; top:0; bottom:-12px; width:2px; background:var(--line); left:50%; transform:translateX(-50%); }
+  .tl-item:last-child .tl-marker::before{ display:none; }
+  .tl-marker .dot{ width:9px; height:9px; border-radius:50%; background:var(--gold); margin-top:5px; position:relative; z-index:1; }
+  .tl-champ{ font-weight:600; font-size:15px; }
+  .tl-runner{ font-size:13px; color:var(--muted-2); margin-top:2px; }
+  @media (max-width: 420px){
+    .tl-item{ grid-template-columns: 44px 16px 1fr; }
+    .tl-year{ font-size:16px; }
+  }
+
+  /* ---------- RIVALRY ---------- */
+  .rivalry-box{
+    display:flex; flex-direction:column; align-items:center; gap:16px;
+    background: var(--panel); padding: 26px 20px;
+    border-top:1px solid var(--line); border-bottom:1px solid var(--line);
+  }
+  .riv-club{ display:flex; flex-direction:column; align-items:center; gap:6px; text-align:center; }
+  .riv-name{ font-weight:600; font-size:15px; }
+  .riv-score{ font-size:34px; color:var(--gold); }
+  .riv-vs{ text-align:center; }
+  .riv-vs-label{ font-size:12px; color:var(--muted-2); }
+  .riv-years{ font-size:14px; color:var(--muted); margin-top:2px; }
+  .riv-note{ font-size:14px; color:var(--muted-2); margin-top:16px; max-width:60ch; }
+  @media (min-width: 560px){
+    .rivalry-box{ flex-direction:row; justify-content:center; gap:36px; }
+  }
+
+  /* ---------- BACK TO TOP ---------- */
+  .back-to-top{
+    position:fixed; right:18px; bottom:18px; width:46px; height:46px; border-radius:50%;
+    background:var(--panel); border:1px solid var(--gold); color:var(--gold);
+    display:flex; align-items:center; justify-content:center;
+    opacity:0; pointer-events:none; transform:translateY(8px);
+    transition: opacity 0.25s ease, transform 0.25s ease;
+    cursor:pointer; z-index:20;
+  }
+  .back-to-top.visible{ opacity:1; pointer-events:auto; transform:none; }
+  .back-to-top svg{ width:20px; height:20px; }
+
+  /* ---------- FOOTER ---------- */
+  footer{ margin-top: 12px; padding-top: 22px; border-top: 1px solid var(--line); font-size: 13px; color: var(--muted-2); }
+  footer p{ margin: 0 0 6px; }
+</style>
+</head>
+<body>
+
+<!--
+  COMO EDITAR
+  1) Nome do torneio: troque "Liga Lumen" no .brand e no <h1>.
+  2) Destaques do topo: bloco .stats-strip (4 cartões).
+  3) Pódio: bloco #podio, os 3 .podium-col.
+  4) Cada clube do quadro é um <div class="club-row"> dentro de .club-list — duplique
+     um bloco inteiro pra adicionar um clube e ajuste os atributos data-titles,
+     data-finals, data-founded e data-last (usados pela busca e pela ordenação).
+  5) Linha do tempo: bloco #linha-do-tempo, um .tl-item por temporada.
+  6) Confronto direto: bloco #confronto.
+  Busca e ordenação já funcionam sozinhas, só editando os dados acima.
+-->
+
+<div class="page">
+
+  <header class="topbar">
+    <div class="brand">Liga <span>Lumen</span></div>
+    <nav class="nav">
+      <a href="#podio">Pódio</a>
+      <a href="#quadro">Quadro</a>
+      <a href="#linha-do-tempo">Linha do tempo</a>
+      <a href="#confronto">Confronto direto</a>
+    </nav>
+  </header>
+
+  <section class="hero">
+    <h1 class="display">LIGA LUMEN</h1>
+    <p>Dez temporadas, oito clubes, e duas finais seguidas entre os mesmos rivais: <strong>Vitória Celeste</strong> e <strong>Estrela do Norte</strong> dividiram os títulos de 2023 e 2024.</p>
+  </section>
+
+  <section class="stats-strip">
+    <div class="stat">
+      <div class="label">Maior campeão</div>
+      <div class="value display">Vitória Celeste FC</div>
+      <div class="sub"><span class="countup" data-target="4">0</span> títulos</div>
+    </div>
+    <div class="stat">
+      <div class="label">Último campeão</div>
+      <div class="value display">Estrela do Norte</div>
+      <div class="sub">campeã em 2025</div>
+    </div>
+    <div class="stat">
+      <div class="label">Mais finais</div>
+      <div class="value display">Águias Doradas</div>
+      <div class="sub"><span class="countup" data-target="6">0</span> finais disputadas</div>
+    </div>
+    <div class="stat">
+      <div class="label">Campeões diferentes</div>
+      <div class="value display"><span class="countup" data-target="6">0</span> clubes</div>
+      <div class="sub">em 10 temporadas</div>
+    </div>
+  </section>
+
+  <section id="podio">
+    <div class="section-head">
+      <h2 class="display">Pódio da liga</h2>
+      <p>Os três clubes com mais títulos na história.</p>
+    </div>
+    <div class="podium">
+      <div class="podium-col place-2">
+        <div class="crest lg">
+          <span class="shield" style="background:linear-gradient(135deg,#C0392B,#F5EFE6);">
+            <span class="icon"><svg viewBox="0 0 24 24" fill="#0E1710"><polygon points="12,2 15,10 12,9 9,10"/><polygon points="12,22 15,14 12,15 9,14"/><polygon points="2,12 10,9 9,12 10,15"/><polygon points="22,12 14,9 15,12 14,15"/></svg></span>
+          </span>
+        </div>
+        <div class="p-rank display">2</div>
+        <div class="p-name">Estrela do Norte</div>
+        <div class="p-count display"><span class="countup" data-target="2">0</span></div>
+        <div class="p-label">títulos</div>
+      </div>
+      <div class="podium-col place-1">
+        <div class="crest lg">
+          <span class="shield" style="background:linear-gradient(135deg,#4FA8DC,#EAF4FB);">
+            <span class="icon"><svg viewBox="0 0 24 24" fill="#0E1710"><polygon points="12,2 15,9 22,9 16.5,13.5 18.5,21 12,16.7 5.5,21 7.5,13.5 2,9 9,9"/></svg></span>
+          </span>
+        </div>
+        <div class="p-rank display">1</div>
+        <div class="p-name">Vitória Celeste FC</div>
+        <div class="p-count display"><span class="countup" data-target="4">0</span></div>
+        <div class="p-label">títulos</div>
+      </div>
+      <div class="podium-col place-3">
+        <div class="crest lg">
+          <span class="shield" style="background:linear-gradient(135deg,#C9A227,#1B1B1B);">
+            <span class="icon"><svg viewBox="0 0 24 24" fill="#F1ECDD"><polygon points="2,6 11,11 2,18"/><polygon points="22,6 13,11 22,18"/></svg></span>
+          </span>
+        </div>
+        <div class="p-rank display">3</div>
+        <div class="p-name">Águias Doradas</div>
+        <div class="p-count display"><span class="countup" data-target="1">0</span></div>
+        <div class="p-label">título</div>
+      </div>
+    </div>
+  </section>
+
+  <main id="quadro">
+    <div class="section-head">
+      <h2 class="display">Quadro de títulos</h2>
+      <p>Toque em um clube para ver a história e o palmarés completo.</p>
+    </div>
+
+    <div class="controls-bar">
+      <div class="search-wrap">
+        <svg class="search-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="7"/><path d="M21 21l-4.3-4.3"/></svg>
+        <input type="search" id="clubSearch" placeholder="Buscar clube pelo nome" aria-label="Buscar clube pelo nome">
+      </div>
+      <label class="sort-wrap">
+        <span>Ordenar por</span>
+        <select id="sortSelect" aria-label="Ordenar clubes por">
+          <option value="titles-desc">Mais títulos</option>
+          <option value="finals-desc">Mais finais</option>
+          <option value="name-asc">Nome (A–Z)</option>
+          <option value="founded-asc">Fundação (mais antigo)</option>
+          <option value="founded-desc">Fundação (mais recente)</option>
+          <option value="last-desc">Último título</option>
+        </select>
+      </label>
+    </div>
+
+    <div class="table-header">
+      <span class="num-col">#</span>
+      <span></span>
+      <span>Clube</span>
+      <span>Títulos</span>
+      <span>Finais</span>
+      <span>Última conquista</span>
+      <span>Fundação</span>
+      <span></span>
+    </div>
+
+    <div class="club-list">
+
+      <div class="club-row" data-name="Vitória Celeste FC" data-titles="4" data-finals="5" data-founded="1998" data-last="2024">
+        <button class="row-summary" aria-expanded="false" aria-controls="d1">
+          <span class="rank display">1</span>
+          <span class="crest">
+            <span class="shield" style="background:linear-gradient(135deg,#4FA8DC,#EAF4FB);">
+              <span class="icon"><svg viewBox="0 0 24 24" fill="#0E1710"><polygon points="12,2 15,9 22,9 16.5,13.5 18.5,21 12,16.7 5.5,21 7.5,13.5 2,9 9,9"/></svg></span>
+            </span>
+          </span>
+          <span class="club-name"><span class="full">Vitória Celeste FC</span><span class="founded-inline">Fundado em 1998</span></span>
+          <span class="num titles display">4</span>
+          <span class="num finals display">5</span>
+          <span class="last-title">2024</span>
+          <span class="founded">1998</span>
+          <svg class="chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M6 9l6 6 6-6"/></svg>
+        </button>
+        <div class="row-detail" id="d1">
+          <div class="row-detail-inner">
+            <p>Fundado em 1998 por um grupo de jogadores de bairro, o Vitória Celeste construiu sua identidade na base: quase sempre a mesma escalação titular. Foi o primeiro clube a erguer a taça da Liga Lumen e, quase dez anos depois, ninguém tirou o troféu de suas mãos por mais de duas temporadas seguidas.</p>
+            <div class="palmares-label">Palmarés</div>
+            <div class="chips">
+              <span class="chip win">Campeão 2016</span>
+              <span class="chip win">Campeão 2018</span>
+              <span class="chip win">Campeão 2021</span>
+              <span class="chip win">Campeão 2024</span>
+              <span class="chip">Vice 2023</span>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="club-row" data-name="Estrela do Norte" data-titles="2" data-finals="3" data-founded="2010" data-last="2025">
+        <button class="row-summary" aria-expanded="false" aria-controls="d2">
+          <span class="rank display">2</span>
+          <span class="crest">
+            <span class="shield" style="background:linear-gradient(135deg,#C0392B,#F5EFE6);">
+              <span class="icon"><svg viewBox="0 0 24 24" fill="#0E1710"><polygon points="12,2 15,10 12,9 9,10"/><polygon points="12,22 15,14 12,15 9,14"/><polygon points="2,12 10,9 9,12 10,15"/><polygon points="22,12 14,9 15,12 14,15"/></svg></span>
+            </span>
+          </span>
+          <span class="club-name"><span class="full">Estrela do Norte</span><span class="founded-inline">Fundado em 2010</span></span>
+          <span class="num titles display">2</span>
+          <span class="num finals display">3</span>
+          <span class="last-title">2025</span>
+          <span class="founded">2010</span>
+          <svg class="chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M6 9l6 6 6-6"/></svg>
+        </button>
+        <div class="row-detail" id="d2">
+          <div class="row-detail-inner">
+            <p>O mais novo dos grandes campeões: surgiu como zebra em 2023 e virou favorito dois anos depois. Levantou a taça duas vezes na segunda metade da década e é, hoje, o atual detentor do título.</p>
+            <div class="palmares-label">Palmarés</div>
+            <div class="chips">
+              <span class="chip win">Campeão 2023</span>
+              <span class="chip win">Campeão 2025</span>
+              <span class="chip">Vice 2024</span>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="club-row" data-name="Águias Doradas" data-titles="1" data-finals="6" data-founded="2003" data-last="2019">
+        <button class="row-summary" aria-expanded="false" aria-controls="d3">
+          <span class="rank display">3</span>
+          <span class="crest">
+            <span class="shield" style="background:linear-gradient(135deg,#C9A227,#1B1B1B);">
+              <span class="icon"><svg viewBox="0 0 24 24" fill="#F1ECDD"><polygon points="2,6 11,11 2,18"/><polygon points="22,6 13,11 22,18"/></svg></span>
+            </span>
+          </span>
+          <span class="club-name"><span class="full">Águias Doradas</span><span class="founded-inline">Fundado em 2003</span></span>
+          <span class="num titles display">1</span>
+          <span class="num finals display">6</span>
+          <span class="last-title">2019</span>
+          <span class="founded">2003</span>
+          <svg class="chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M6 9l6 6 6-6"/></svg>
+        </button>
+        <div class="row-detail" id="d3">
+          <div class="row-detail-inner">
+            <p>Nenhum clube chegou a tantas finais quanto o Águias Doradas — e nenhum sofreu tanto pra comemorar apenas uma vez. A torcida já aprendeu a rir da própria dor: "a gente não perde a final, a gente empresta ela".</p>
+            <div class="palmares-label">Palmarés</div>
+            <div class="chips">
+              <span class="chip win">Campeão 2019</span>
+              <span class="chip">Vice 2016</span>
+              <span class="chip">Vice 2018</span>
+              <span class="chip">Vice 2020</span>
+              <span class="chip">Vice 2022</span>
+              <span class="chip">Vice 2025</span>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="club-row" data-name="Cometa FC" data-titles="1" data-finals="1" data-founded="2015" data-last="2022">
+        <button class="row-summary" aria-expanded="false" aria-controls="d4">
+          <span class="rank display">4</span>
+          <span class="crest">
+            <span class="shield" style="background:linear-gradient(135deg,#6C4A9C,#EDE6F5);">
+              <span class="icon"><svg viewBox="0 0 24 24" fill="#0E1710"><circle cx="17" cy="7" r="3"/><path d="M14 9 L4 20" stroke="#0E1710" stroke-width="2" fill="none" stroke-linecap="round"/></svg></span>
+            </span>
+          </span>
+          <span class="club-name"><span class="full">Cometa FC</span><span class="founded-inline">Fundado em 2015</span></span>
+          <span class="num titles display">1</span>
+          <span class="num finals display">1</span>
+          <span class="last-title">2022</span>
+          <span class="founded">2015</span>
+          <svg class="chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M6 9l6 6 6-6"/></svg>
+        </button>
+        <div class="row-detail" id="d4">
+          <div class="row-detail-inner">
+            <p>O caçula da liga foi direto ao ponto: fundado em 2015, conquistou seu primeiro e único título em apenas sete temporadas de existência, numa campanha que ninguém viu chegar.</p>
+            <div class="palmares-label">Palmarés</div>
+            <div class="chips"><span class="chip win">Campeão 2022</span></div>
+          </div>
+        </div>
+      </div>
+
+      <div class="club-row" data-name="Furacão Atlântico" data-titles="1" data-finals="1" data-founded="2012" data-last="2020">
+        <button class="row-summary" aria-expanded="false" aria-controls="d5">
+          <span class="rank display">5</span>
+          <span class="crest">
+            <span class="shield" style="background:linear-gradient(135deg,#1F3A5F,#D8E4EE);">
+              <span class="icon"><svg viewBox="0 0 24 24" fill="none" stroke="#F1ECDD" stroke-width="1.6"><path d="M12 2 a7 7 0 0 1 0 14"/><path d="M12 6 a3.3 3.3 0 0 1 0 6.6"/></svg></span>
+            </span>
+          </span>
+          <span class="club-name"><span class="full">Furacão Atlântico</span><span class="founded-inline">Fundado em 2012</span></span>
+          <span class="num titles display">1</span>
+          <span class="num finals display">1</span>
+          <span class="last-title">2020</span>
+          <span class="founded">2012</span>
+          <svg class="chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M6 9l6 6 6-6"/></svg>
+        </button>
+        <div class="row-detail" id="d5">
+          <div class="row-detail-inner">
+            <p>Surfando a temporada mais estranha da liga, disputada quase inteira sem torcida presente, o Furacão Atlântico aproveitou o momento incomum pra conquistar seu único título, em 2020.</p>
+            <div class="palmares-label">Palmarés</div>
+            <div class="chips"><span class="chip win">Campeão 2020</span></div>
+          </div>
+        </div>
+      </div>
+
+      <div class="club-row" data-name="Leões do Vale FC" data-titles="1" data-finals="1" data-founded="1995" data-last="2017">
+        <button class="row-summary" aria-expanded="false" aria-controls="d6">
+          <span class="rank display">6</span>
+          <span class="crest">
+            <span class="shield" style="background:linear-gradient(135deg,#3B7A3E,#F2D94E);">
+              <span class="icon"><svg viewBox="0 0 24 24" fill="#0E1710"><polygon points="2,18 8,8 12,14 16,6 22,18"/></svg></span>
+            </span>
+          </span>
+          <span class="club-name"><span class="full">Leões do Vale FC</span><span class="founded-inline">Fundado em 1995</span></span>
+          <span class="num titles display">1</span>
+          <span class="num finals display">1</span>
+          <span class="last-title">2017</span>
+          <span class="founded">1995</span>
+          <svg class="chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M6 9l6 6 6-6"/></svg>
+        </button>
+        <div class="row-detail" id="d6">
+          <div class="row-detail-inner">
+            <p>Tradicional e discreto, o Leões do Vale entrou pra história com uma campanha impecável em 2017. Nunca mais voltou a uma final, mas na sede do clube ninguém esquece aquela taça.</p>
+            <div class="palmares-label">Palmarés</div>
+            <div class="chips"><span class="chip win">Campeão 2017</span></div>
+          </div>
+        </div>
+      </div>
+
+      <div class="club-row" data-name="Marítimo Union" data-titles="0" data-finals="2" data-founded="2001" data-last="0">
+        <button class="row-summary" aria-expanded="false" aria-controls="d7">
+          <span class="rank display">7</span>
+          <span class="crest">
+            <span class="shield" style="background:linear-gradient(135deg,#7EC8E3,#FFFFFF);">
+              <span class="icon"><svg viewBox="0 0 24 24" fill="none" stroke="#0E1710" stroke-width="2"><path d="M2 14c2-2 4-2 6 0s4 2 6 0 4-2 6 0" stroke-linecap="round"/><path d="M2 18c2-2 4-2 6 0s4 2 6 0 4-2 6 0" stroke-linecap="round"/></svg></span>
+            </span>
+          </span>
+          <span class="club-name"><span class="full">Marítimo Union</span><span class="founded-inline">Fundado em 2001</span></span>
+          <span class="num titles display">0</span>
+          <span class="num finals display">2</span>
+          <span class="last-title">—</span>
+          <span class="founded">2001</span>
+          <svg class="chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M6 9l6 6 6-6"/></svg>
+        </button>
+        <div class="row-detail" id="d7">
+          <div class="row-detail-inner">
+            <p>Duas finais, dois vices. O Marítimo Union ainda espera pelo dia em que vai decidir a taça a seu favor — mas é, disparado, o clube que mais chegou perto sem nunca ter erguido o título.</p>
+            <div class="palmares-label">Palmarés</div>
+            <div class="chips"><span class="chip">Vice 2017</span><span class="chip">Vice 2021</span></div>
+          </div>
+        </div>
+      </div>
+
+      <div class="club-row" data-name="Trovão SC" data-titles="0" data-finals="1" data-founded="2008" data-last="0">
+        <button class="row-summary" aria-expanded="false" aria-controls="d8">
+          <span class="rank display">8</span>
+          <span class="crest">
+            <span class="shield" style="background:linear-gradient(135deg,#5B6770,#F2C230);">
+              <span class="icon"><svg viewBox="0 0 24 24" fill="#0E1710"><polygon points="13,2 5,13 11,13 9,22 19,10 13,10"/></svg></span>
+            </span>
+          </span>
+          <span class="club-name"><span class="full">Trovão SC</span><span class="founded-inline">Fundado em 2008</span></span>
+          <span class="num titles display">0</span>
+          <span class="num finals display">1</span>
+          <span class="last-title">—</span>
+          <span class="founded">2008</span>
+          <svg class="chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M6 9l6 6 6-6"/></svg>
+        </button>
+        <div class="row-detail" id="d8">
+          <div class="row-detail-inner">
+            <p>Chegou a uma final, em 2019, e desde então tenta repetir a campanha que quase lhe deu o primeiro título da história da liga.</p>
+            <div class="palmares-label">Palmarés</div>
+            <div class="chips"><span class="chip">Vice 2019</span></div>
+          </div>
+        </div>
+      </div>
+
+    </div>
+    <p id="noResults" class="no-results" aria-live="polite">Nenhum clube encontrado com esse nome.</p>
+  </main>
+
+  <section id="linha-do-tempo">
+    <div class="section-head">
+      <h2 class="display">Linha do tempo</h2>
+      <p>O campeão de cada temporada, do início até hoje.</p>
+    </div>
+    <div class="timeline">
+      <div class="tl-item"><div class="tl-year display">2016</div><div class="tl-marker"><span class="dot"></span></div><div><div class="tl-champ">Vitória Celeste FC</div><div class="tl-runner">Vice: Águias Doradas</div></div></div>
+      <div class="tl-item"><div class="tl-year display">2017</div><div class="tl-marker"><span class="dot"></span></div><div><div class="tl-champ">Leões do Vale FC</div><div class="tl-runner">Vice: Marítimo Union</div></div></div>
+      <div class="tl-item"><div class="tl-year display">2018</div><div class="tl-marker"><span class="dot"></span></div><div><div class="tl-champ">Vitória Celeste FC</div><div class="tl-runner">Vice: Águias Doradas</div></div></div>
+      <div class="tl-item"><div class="tl-year display">2019</div><div class="tl-marker"><span class="dot"></span></div><div><div class="tl-champ">Águias Doradas</div><div class="tl-runner">Vice: Trovão SC</div></div></div>
+      <div class="tl-item"><div class="tl-year display">2020</div><div class="tl-marker"><span class="dot"></span></div><div><div class="tl-champ">Furacão Atlântico</div><div class="tl-runner">Vice: Águias Doradas</div></div></div>
+      <div class="tl-item"><div class="tl-year display">2021</div><div class="tl-marker"><span class="dot"></span></div><div><div class="tl-champ">Vitória Celeste FC</div><div class="tl-runner">Vice: Marítimo Union</div></div></div>
+      <div class="tl-item"><div class="tl-year display">2022</div><div class="tl-marker"><span class="dot"></span></div><div><div class="tl-champ">Cometa FC</div><div class="tl-runner">Vice: Águias Doradas</div></div></div>
+      <div class="tl-item"><div class="tl-year display">2023</div><div class="tl-marker"><span class="dot"></span></div><div><div class="tl-champ">Estrela do Norte</div><div class="tl-runner">Vice: Vitória Celeste FC</div></div></div>
+      <div class="tl-item"><div class="tl-year display">2024</div><div class="tl-marker"><span class="dot"></span></div><div><div class="tl-champ">Vitória Celeste FC</div><div class="tl-runner">Vice: Estrela do Norte</div></div></div>
+      <div class="tl-item"><div class="tl-year display">2025</div><div class="tl-marker"><span class="dot"></span></div><div><div class="tl-champ">Estrela do Norte</div><div class="tl-runner">Vice: Águias Doradas</div></div></div>
+    </div>
+  </section>
+
+  <section id="confronto">
+    <div class="section-head">
+      <h2 class="display">Confronto direto</h2>
+      <p>A única dupla que já decidiu duas finais seguidas.</p>
+    </div>
+    <div class="rivalry-box">
+      <div class="riv-club">
+        <div class="crest lg">
+          <span class="shield" style="background:linear-gradient(135deg,#4FA8DC,#EAF4FB);">
+            <span class="icon"><svg viewBox="0 0 24 24" fill="#0E1710"><polygon points="12,2 15,9 22,9 16.5,13.5 18.5,21 12,16.7 5.5,21 7.5,13.5 2,9 9,9"/></svg></span>
+          </span>
+        </div>
+        <div class="riv-name">Vitória Celeste FC</div>
+        <div class="riv-score display">1</div>
+      </div>
+      <div class="riv-vs">
+        <div class="riv-vs-label">finais decididas</div>
+        <div class="riv-years">2023–2024</div>
+      </div>
+      <div class="riv-club">
+        <div class="crest lg">
+          <span class="shield" style="background:linear-gradient(135deg,#C0392B,#F5EFE6);">
+            <span class="icon"><svg viewBox="0 0 24 24" fill="#0E1710"><polygon points="12,2 15,10 12,9 9,10"/><polygon points="12,22 15,14 12,15 9,14"/><polygon points="2,12 10,9 9,12 10,15"/><polygon points="22,12 14,9 15,12 14,15"/></svg></span>
+          </span>
+        </div>
+        <div class="riv-name">Estrela do Norte</div>
+        <div class="riv-score display">1</div>
+      </div>
+    </div>
+    <p class="riv-note">Estrela do Norte venceu a final de 2023; Vitória Celeste devolveu o favor em 2024. Nenhuma outra dupla se reencontrou numa decisão.</p>
+  </section>
+
+  <footer>
+    <p>Dados fictícios de exemplo — edite os blocos de clube no código para montar o quadro do seu próprio torneio.</p>
+    <p>Busca, ordenação e linha do tempo já funcionam sozinhas — só troque os dados pelos do seu campeonato.</p>
+  </footer>
+
+</div>
+
+<button id="backToTop" class="back-to-top" aria-label="Voltar ao topo">
+  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 19V5M5 12l7-7 7 7"/></svg>
+</button>
+
+<script>
+document.addEventListener('DOMContentLoaded', () => {
+  const reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+  /* accordion */
+  const rowButtons = document.querySelectorAll('.row-summary');
+  rowButtons.forEach(btn => {
+    btn.addEventListener('click', () => {
+      const panel = document.getElementById(btn.getAttribute('aria-controls'));
+      const isOpen = btn.getAttribute('aria-expanded') === 'true';
+      rowButtons.forEach(other => {
+        if (other !== btn && other.getAttribute('aria-expanded') === 'true') {
+          other.setAttribute('aria-expanded', 'false');
+          document.getElementById(other.getAttribute('aria-controls')).style.maxHeight = '0px';
+        }
+      });
+      if (isOpen) {
+        btn.setAttribute('aria-expanded', 'false');
+        panel.style.maxHeight = '0px';
+      } else {
+        btn.setAttribute('aria-expanded', 'true');
+        panel.style.maxHeight = panel.scrollHeight + 'px';
+      }
+    });
+  });
+
+  /* count up */
+  function animateCount(el){
+    const target = parseInt(el.dataset.target, 10);
+    if (isNaN(target)) return;
+    if (reduceMotion){ el.textContent = target; return; }
+    const duration = 900;
+    const start = performance.now();
+    function step(now){
+      const p = Math.min((now - start) / duration, 1);
+      const eased = 1 - Math.pow(1 - p, 2);
+      el.textContent = Math.round(eased * target);
+      if (p < 1) requestAnimationFrame(step);
+    }
+    requestAnimationFrame(step);
+  }
+  document.querySelectorAll('.countup').forEach(animateCount);
+
+  /* sort + filter */
+  const clubList = document.querySelector('.club-list');
+  const rows = Array.from(document.querySelectorAll('.club-row'));
+  const searchInput = document.getElementById('clubSearch');
+  const sortSelect = document.getElementById('sortSelect');
+  const noResults = document.getElementById('noResults');
+
+  function normalize(str){
+    return String(str).toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g, '');
+  }
+
+  function applySort(){
+    const mode = sortSelect.value;
+    const sorted = rows.slice().sort((a, b) => {
+      const da = a.dataset, db = b.dataset;
+      switch (mode) {
+        case 'finals-desc': return (db.finals - da.finals) || (db.titles - da.titles);
+        case 'name-asc': return normalize(da.name).localeCompare(normalize(db.name));
+        case 'founded-asc': return da.founded - db.founded;
+        case 'founded-desc': return db.founded - da.founded;
+        case 'last-desc': return db.last - da.last;
+        default: return (db.titles - da.titles) || (db.finals - da.finals);
+      }
+    });
+    sorted.forEach((row, i) => {
+      row.querySelector('.rank').textContent = i + 1;
+      clubList.appendChild(row);
+    });
+  }
+
+  function applyFilter(){
+    const q = normalize(searchInput.value.trim());
+    let visible = 0;
+    rows.forEach(row => {
+      const match = normalize(row.dataset.name).includes(q);
+      row.style.display = match ? '' : 'none';
+      if (match) visible++;
+    });
+    noResults.style.display = visible === 0 ? 'block' : 'none';
+  }
+
+  sortSelect.addEventListener('change', () => { applySort(); applyFilter(); });
+  searchInput.addEventListener('input', applyFilter);
+  applySort();
+
+  /* back to top */
+  const topBtn = document.getElementById('backToTop');
+  window.addEventListener('scroll', () => {
+    topBtn.classList.toggle('visible', window.scrollY > 420);
+  });
+  topBtn.addEventListener('click', () => {
+    window.scrollTo({ top: 0, behavior: reduceMotion ? 'auto' : 'smooth' });
+  });
+});
+</script>
+
+</body>
+</html>
